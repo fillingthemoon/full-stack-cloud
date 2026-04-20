@@ -1,0 +1,33 @@
+stages:
+  - compliance
+  - build
+  - infra-plan
+  - infra-deploy
+
+variables:
+  AWS_REGION: "ap-southeast-1"
+  AWS_ROLE_ARN: "arn:aws:iam::123456789012:role/notes-api-service-gitlab-ci-role"
+
+include:
+  - local: '/.cicd/compliance.gitlab-ci.yml'
+  - local: '/.cicd/docker.gitlab-ci.yml'
+  - local: '/.cicd/infra.gitlab-ci.yml'
+
+.aws-auth:
+  image: 
+    name: amazon/aws-cli:latest
+    entrypoint: [""]
+  id_tokens:
+    GITLAB_OIDC_TOKEN:
+      aud: https://gitlab.com
+  before_script:
+    - mkdir -p ~/.aws
+    - echo "${ID_TOKEN}" > /tmp/web_identity_token
+    - >
+      export $(printf "AWS_ACCESS_KEY_ID=%s AWS_SECRET_ACCESS_KEY=%s AWS_SESSION_TOKEN=%s"
+      $(aws sts assume-role-with-web-identity
+      --role-arn ${AWS_ROLE_ARN}
+      --role-session-name "GitLabCI-${CI_JOB_ID}"
+      --web-identity-token ${GITLAB_OIDC_TOKEN}
+      --query "Credentials.[AccessKeyId,SecretAccessKey,SessionToken]"
+      --output text))

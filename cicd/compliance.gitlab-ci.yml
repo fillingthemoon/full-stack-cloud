@@ -1,0 +1,18 @@
+lint-terraform:
+  stage: compliance
+  image: hashicorp/terraform:1.9.0
+  script:
+    - cd infra/
+    - terraform fmt -check
+    - terraform init -backend=false
+    - terraform validate
+
+security-scan:
+  stage: compliance
+  image: 
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    - trivy config infra/
+    - trivy fs app/
+  allow_failure: true

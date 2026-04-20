@@ -1,0 +1,24 @@
+terraform-plan:
+  stage: infra-plan
+  extends: .aws-auth
+  image: hashicorp/terraform:1.9.0
+  script:
+    - cd infra/
+    - terraform init
+    - terraform plan -var="container_image=${ECR_REGISTRY}/notes-app:${CI_COMMIT_SHORT_SHA}" -out=tfplan
+  artifacts:
+    paths:
+      - infra/tfplan
+    expire_in: 1 hour
+
+terraform-deploy:
+  stage: infra-deploy
+  extends: .aws-auth
+  image: hashicorp/terraform:1.9.0
+  script:
+    - cd infra/
+    - terraform init
+    - terraform apply -auto-approve tfplan
+  when: manual
+  only:
+    - main

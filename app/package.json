@@ -1,0 +1,26 @@
+{
+  "name": "notes-api",
+  "version": "1.0.0",
+  "description": "Vanilla Node.js CRUD API for AWS Lambda and DynamoDB",
+  "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "dynamodb",
+    "terraform",
+    "node"
+  ],
+  "author": "Candidate",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  }
+}
